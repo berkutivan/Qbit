@@ -3,6 +3,7 @@ import numpy as np
 import pylatexenc
 import matplotlib
 import  random
+import os
 from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister
 
 
@@ -59,59 +60,64 @@ all_1gates = ["H","X","Z","T","S","Y","Tdg"]
 all_2gates = ["CX","CZ","SWAP","ISWAP"]
 all_3gates = ["CCX","CCZ"]
 
-circuit = QuantumCircuit(count_qbits, count_bits)
+n = int(input("Число нужных цепочек"))
 
-for i in range(deep):
-    block = random.randint(0,5)
-    if block == 0:
-        q = random.randint(0, count_qbits - 1)
-        s = random.randint(0, count_bits - 1)
-        circuit.measure(q, s)
-    elif  block == 1 or block == 2:
-        gate = random.choice(all_1gates)
-        qbit = random.randint(0, count_qbits - 1)
-        if gate == "H":
-            circuit.h(qbit)
-        elif gate == "X":
-            circuit.x(qbit)
-        elif gate == "Z":
-            circuit.z(qbit)
-        elif gate == "T":
-            circuit.t(qbit)
-        elif gate == "S":
-            circuit.s(qbit)
-        elif gate == "Y":
-            circuit.y(qbit)
-        elif gate == "Tdg":
-            circuit.tdg(qbit)
-    elif (block == 3 or block == 4):
-        if count_qbits <2:
-            deep += 1
-            continue
-        gate = random.choice(all_2gates)
-        listt = [ j for j in range(count_qbits)]
-        random.shuffle(listt)
-        qbit1, qbit2  = listt[0], listt[1]
-        if gate == "CX":
-            circuit.cx(qbit1,qbit2)
-        elif gate == "CY":
-            circuit.cy(qbit1,qbit2)
-        elif gate == "CZ":
-            circuit.cz(qbit1,qbit2)
-        elif gate == "CH":
-            circuit.ch(qbit1,qbit2)
-    else:
-        if count_qbits <3:
-            deep += 1
-            continue
-        gate = random.choice(all_3gates)
-        listt = [j for j in range(count_qbits)]
-        random.shuffle(listt)
-        qbit1, qbit2, qbit3 = listt[0], listt[1], listt[2]
-        if gate == "CCX":
-            circuit.ccx(qbit1, qbit2, qbit3)
-        elif gate == "CCZ":
-            circuit.ccz(qbit1, qbit2, qbit3)
+for k in range(n):
+    circuit = QuantumCircuit(count_qbits, count_bits)
 
+    for i in range(deep):
+        block = random.randint(0, 5)
+        if block == 0:
+            q = random.randint(0, count_qbits - 1)
+            s = random.randint(0, count_bits - 1)
+            circuit.measure(q, s)
+        elif block == 1 or block == 2:
+            gate = random.choice(all_1gates)
+            qbit = random.randint(0, count_qbits - 1)
+            if gate == "H":
+                circuit.h(qbit)
+            elif gate == "X":
+                circuit.x(qbit)
+            elif gate == "Z":
+                circuit.z(qbit)
+            elif gate == "T":
+                circuit.t(qbit)
+            elif gate == "S":
+                circuit.s(qbit)
+            elif gate == "Y":
+                circuit.y(qbit)
+            elif gate == "Tdg":
+                circuit.tdg(qbit)
+        elif (block == 3 or block == 4):
+            if count_qbits < 2:
+                deep += 1
+                continue
+            gate = random.choice(all_2gates)
+            listt = [j for j in range(count_qbits)]
+            random.shuffle(listt)
+            qbit1, qbit2 = listt[0], listt[1]
+            if gate == "CX":
+                circuit.cx(qbit1, qbit2)
+            elif gate == "CY":
+                circuit.cy(qbit1, qbit2)
+            elif gate == "CZ":
+                circuit.cz(qbit1, qbit2)
+            elif gate == "CH":
+                circuit.ch(qbit1, qbit2)
+        else:
+            if count_qbits < 3:
+                deep += 1
+                continue
+            gate = random.choice(all_3gates)
+            listt = [j for j in range(count_qbits)]
+            random.shuffle(listt)
+            qbit1, qbit2, qbit3 = listt[0], listt[1], listt[2]
+            if gate == "CCX":
+                circuit.ccx(qbit1, qbit2, qbit3)
+            elif gate == "CCZ":
+                circuit.ccz(qbit1, qbit2, qbit3)
 
-circuit.qasm(filename="circuit.qasm")
+    file = "circuit" + str(k) + ".qasm"
+    circuit.qasm(filename=file)
+    file_replace = "circuits_give/" + file
+    os.rename(file, file_replace)
